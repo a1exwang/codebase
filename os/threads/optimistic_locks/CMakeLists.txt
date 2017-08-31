@@ -1,0 +1,3 @@
+
+ADD_EXECUTABLE(optimistic_locks optimistic_locks.cpp)
+TARGET_LINK_LIBRARIES(optimistic_locks pthread)
