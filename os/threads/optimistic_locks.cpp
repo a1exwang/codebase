@@ -2,18 +2,21 @@
 #include <mutex>
 #include <chrono>
 #include <vector>
+#include <iostream>
 
 
 using namespace std;
 
 constexpr int THREAD_COUNT = 1900;
 constexpr int OP_COUNT = 1000;
+constexpr int MIN_SLEEP_US = 0;
+constexpr int MAX_SLEEP_US = 100;
 
 template <typename T>
 struct IncOp {
     static T process(T val) {
         using namespace std::chrono_literals;
-        int t = rand() % 100;
+        int t = (rand() % (MAX_SLEEP_US - MIN_SLEEP_US)) + MIN_SLEEP_US;
 
         this_thread::sleep_for(1us * t);
         return val + 1;
@@ -81,10 +84,15 @@ private:
 };
 
 int main() {
-    srand(static_cast<unsigned int>(time(nullptr)));
+    auto seed = static_cast<unsigned int>(time(nullptr));
+    srand(seed);
+    cout << "seed: " << seed << endl;
+    cout << "thread_count: " << THREAD_COUNT << endl;
+    cout << "total_count: " << OP_COUNT << endl;
+    cout << "sleep_us: [" << MIN_SLEEP_US << ", " << MAX_SLEEP_US << ")" << endl;
+
     PessimisticLock<IncOp<int>, NumberLimitChecker<int>> l;
     vector<thread> threads1;
-
     auto t1 = chrono::system_clock::now();
     for (int j = 0; j < THREAD_COUNT; ++j) {
         threads1.push_back(move(thread([&l]() -> void {

@@ -1,1 +1,5 @@
-ADD_SUBDIRECTORY(optimistic_locks)
+ADD_EXECUTABLE(optimistic_locks optimistic_locks.cpp)
+TARGET_LINK_LIBRARIES(optimistic_locks pthread)
+
+ADD_EXECUTABLE(lock_free_queue lock_free_queue.cpp)
+TARGET_LINK_LIBRARIES(lock_free_queue pthread)
